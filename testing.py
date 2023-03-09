@@ -17,10 +17,8 @@ def modinv(a, m):
         return x % m
 
 
-def test_sum():
-    assert sum([1, 2, 2]) == 6, "Should be 6"
-
-
-if __name__ == "__main__":
-    test_sum()
-    print("Everything passed")
+print(list("a".encode("ascii")))
+print(chr(1114111))
+a = chr("a".encode("ascii")[0] + 1)
+a = list(a.encode("ascii"))
+print(a)
