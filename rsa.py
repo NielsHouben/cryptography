@@ -1,10 +1,13 @@
 import numpy as np
+from utils.primeGen import generateLargePrime
 
 
 class RSA:
     """RSA encryption"""
 
-    def keygen(self, p, q):
+    def keygen(self, keysize):
+        p, q, = generateLargePrime(keysize), generateLargePrime(keysize)
+
         n = p * q
         fi = (p - 1) * (q - 1)
         e = 65537
@@ -16,20 +19,20 @@ class RSA:
 
     def encrypt(self, m, pub_key):
         encoded = m.encode('ascii')
-        encrypted = [pow(c, pub_key["e"], pub_key["n"]) for c in encoded]
+        encrypted = (pow(c, pub_key["e"], pub_key["n"]) for c in encoded)
         return encrypted
 
     def decrypt(self, m, pub_key, d):
-        decrypted = "".join([chr(pow(c, d, pub_key["n"])) for c in m])
+        decrypted = "".join(chr(pow(c, d, pub_key["n"])) for c in m)
         return decrypted
 
 
 if __name__ == "__main__":
     rsa = RSA()
 
-    public_key, private_key = rsa.keygen(31, 23)
-    print("pup_key", public_key)
-    print("private_key", private_key)
+    public_key, private_key = rsa.keygen(16)
+    print("pup_key:", public_key)
+    print("private_key:", private_key)
     message = "HI, this is an encrypted message"
     print("message:", message)
     message_encrypted = rsa.encrypt(message, public_key)

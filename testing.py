@@ -17,7 +17,10 @@ def modinv(a, m):
         return x % m
 
 
-# print(modinv(3, 160))
-alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+def test_sum():
+    assert sum([1, 2, 2]) == 6, "Should be 6"
 
-print(list(alphabet.encode("ascii")))
+
+if __name__ == "__main__":
+    test_sum()
+    print("Everything passed")
