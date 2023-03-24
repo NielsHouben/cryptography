@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module rsa</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>rsa</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdev%5Ccryptography%5Crsa.py">c:\dev\cryptography\rsa.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="rsa.html#RSA">RSA</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="RSA">class <strong>RSA</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Attributes<br>
+----------<br>
+e&nbsp;:&nbsp;int<br>
+&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;constant&nbsp;used&nbsp;to&nbsp;genrerate&nbsp;private&nbsp;key&nbsp;and&nbsp;encrypt&nbsp;messages&nbsp;<br>
+&nbsp;<br>
+Methods<br>
+-------<br>
+<a href="#RSA-keygen">keygen</a>(keysize=1024)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Generates&nbsp;public&nbsp;and&nbsp;private&nbsp;key<br>
+&nbsp;<br>
+<a href="#RSA-encrypt">encrypt</a>(message,&nbsp;public_key)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Encrypts&nbsp;message&nbsp;with&nbsp;public&nbsp;key<br>
+&nbsp;<br>
+<a href="#RSA-decrypt">decrypt</a>(message,&nbsp;public_key,&nbsp;private_key)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Decrypts&nbsp;message&nbsp;with&nbsp;private&nbsp;key<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="RSA-decrypt"><strong>decrypt</strong></a>(self, m: str, pub_key: dict, d: int)</dt><dd><tt>Decrypts&nbsp;message&nbsp;m&nbsp;with&nbsp;public&nbsp;and&nbsp;private&nbsp;key</tt></dd></dl>
+
+<dl><dt><a name="RSA-encrypt"><strong>encrypt</strong></a>(self, m: str, pub_key: dict)</dt><dd><tt>Encrypts&nbsp;message&nbsp;m&nbsp;with&nbsp;public&nbsp;key<br>
+&nbsp;<br>
+Step&nbsp;1.&nbsp;Encode&nbsp;message&nbsp;with&nbsp;ascii<br>
+&nbsp;<br>
+Step&nbsp;2.&nbsp;Encrypt&nbsp;each&nbsp;key&nbsp;individually&nbsp;by&nbsp;calculating&nbsp;c^e&nbsp;in&nbsp;mod&nbsp;n</tt></dd></dl>
+
+<dl><dt><a name="RSA-keygen"><strong>keygen</strong></a>(self, keysize=1024)</dt><dd><tt>generate&nbsp;public&nbsp;and&nbsp;private&nbsp;key<br>
+&nbsp;<br>
+keysize&nbsp;is&nbsp;in&nbsp;bytes</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>e</strong> = 65537</dl>
+
+</td></tr></table></td></tr></table>
+</body></html>

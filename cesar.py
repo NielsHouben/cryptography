@@ -12,7 +12,7 @@ class Cesar:
             if c == " ":
                 encrypted += " "
                 continue
-            idx = (self.alphabet.index(c))
+            idx = self.alphabet.index(c)
             newIdx = idx + self.shift
             if newIdx > 25:
                 newIdx = (newIdx % 25) - 1

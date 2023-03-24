@@ -1,7 +1,7 @@
 from utils.generatePrime import generatePrime
 
 
-class RSA:
+class RSA_text:
     """
     Attributes
     ----------
@@ -33,6 +33,7 @@ class RSA:
 
         n = p * q
         fi = (p - 1) * (q - 1)
+        # e = 65537
         if p % self.e == 1 or q % self.e == 1:
             print("we have a problem")
 
@@ -47,29 +48,29 @@ class RSA:
         Step 2. Encrypt each key individually by calculating c^e in mod n
         """
 
-        encrypted = pow(m, pub_key["e"], pub_key["n"])
-        return encrypted
+        encoded = m.encode('ascii')
+        encrypted = (pow(c, pub_key["e"], pub_key["n"]) for c in encoded)
+        return list(encrypted)
 
     def decrypt(self, m: str, pub_key: dict, d: int):
         """Decrypts message m with public and private key"""
 
-        decrypted = pow(m, d, pub_key["n"])
+        decrypted = "".join(chr(pow(c, d, pub_key["n"])) for c in m)
         return decrypted
 
 
 if __name__ == "__main__":
-    rsa = RSA()
+    rsa = RSA_text()
 
     public_key, private_key = rsa.keygen(16)
     print("pup_key:", public_key)
     print("private_key:", private_key)
-    print()
 
-    message = 0xFF
-    print(f"message: {message}")
+    message = "HI, this is an encrypted message"
+    print("message:", message)
 
     message_encrypted = rsa.encrypt(message, public_key)
-    print(f"encrypted: {message_encrypted}", )
+    print("encrypted:", message_encrypted)
 
     message_decrypted = rsa.decrypt(message_encrypted, public_key, private_key)
-    print(f"decrypted: {message_decrypted}")
+    print("decrypted:", message_decrypted)
