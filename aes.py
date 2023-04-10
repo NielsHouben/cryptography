@@ -218,14 +218,23 @@ class AES:
     def plaintext_to_matrix(self, plaintext):
         """converts plaintext (16 bytes) to 4x4 hex matrix"""
 
-        bytestring = plaintext.encode("ascii")
+        input_bytes = plaintext.encode("ascii")
+
+        # for start in len(input_bytes):
+        #     print(input_bytes[start:start+16])
+
+        if len(input_bytes) != 16:
+            padding = 16 - len(input_bytes)
+            # print(input_bytes)
+            input_bytes = list(input_bytes) + [padding] * padding
 
         matrix = np.array([
-            list(bytestring[0:4]),
-            list(bytestring[4:8]),
-            list(bytestring[8:12]),
-            list(bytestring[12:16])
+            list(input_bytes[0:4]),
+            list(input_bytes[4:8]),
+            list(input_bytes[8:12]),
+            list(input_bytes[12:16])
         ]).T
+
         return matrix
 
     def matrix_to_plaintext(self, matrix):
@@ -337,11 +346,10 @@ class AES:
         return matrix
 
     def encryptBlock(self, block):
-        original = self.plaintext_to_matrix(block)
 
         # first XOR
         matrix = np.array([
-            [original.item(x, y) ^ self.roundKeys[0].item(x, y) for x in range(4)] for y in range(4)
+            [block.item(x, y) ^ self.roundKeys[0].item(x, y) for x in range(4)] for y in range(4)
         ]).T
 
         for r in range(10):
@@ -351,7 +359,22 @@ class AES:
         return ciphertext
 
     def encrypt(self, plaintext):
-        return self.encryptBlock(plaintext)
+        def getBlock(start):
+            m = plaintext[start:start + 16]
+            m = self.plaintext_to_matrix(m)
+            return m
+
+        blocks = [getBlock(start) for start in range(0, len(plaintext), 16)]
+
+        # if no paddign was neccesary, add empty block to show that
+        if len(plaintext) % 16 == 0:
+            blocks.append(np.array([[0] * 4] * 4))
+
+        ciphertext = ""
+
+        for block in blocks:
+            ciphertext += self.encryptBlock(block)
+        return ciphertext
 
     def decryptRound(self, matrix, r):
         # add round key
@@ -401,19 +424,12 @@ if __name__ == "__main__":
     aes.roundkeyGen("Thats my Kung Fu")
     print("Generated Round Keys")
 
-    message = "Two One Nine Twooo"
+    message = "Two One Nine Two"
     print(message)
 
-    def getBlock(start):
-        m = message[start:start + 16]
-        if len(m) == 16:
-            return m
+    # a = aes.plaintext_to_matrix("oolaskdjlolaskj")
 
-        return m
-
-    blocks = [getBlock(start) for start in range(0, len(message), 16)]
-
-    print(blocks[1])
+    # print(a)
 
     encrypted = aes.encrypt(message)
     print(encrypted)
