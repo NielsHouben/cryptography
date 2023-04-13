@@ -34,7 +34,7 @@ class RSA:
         n = p * q
         fi = (p - 1) * (q - 1)
         if p % self.e == 1 or q % self.e == 1:
-            print("we have a problem")
+            print("we have a problem, this is not pssible!")
 
         d = pow(self.e, -1, fi)
         return {"n": n, "e": self.e}, d
@@ -44,7 +44,7 @@ class RSA:
 
         Step 1. Encode message with ascii
 
-        Step 2. Encrypt each key individually by calculating c^e in mod n
+        Step 2. Encrypt each character individually by calculating c^e in mod n
         """
 
         encrypted = pow(m, pub_key["e"], pub_key["n"])

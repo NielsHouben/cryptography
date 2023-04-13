@@ -1,31 +1,24 @@
-"""
-general:
-implementing this https://www.simplilearn.com/tutorials/cryptography-tutorial/aes-encryption#:~:text=Key%20Expansion%3A%20It%20takes%20a,bytes%20during%20the%20encryption%20procedure.
-
-key schedule:
-https://braincoke.fr/blog/2020/08/the-aes-key-schedule-explained/#rotword
-and
-https://www.brainkart.com/article/AES-Key-Expansion_8410/
-
-mixColumns was done with these lookup tables
-https://en.wikipedia.org/wiki/Rijndael_MixColumns
-
-
-
-
-TODO
-let user take out key and input key
-"""
-
-
 import numpy as np
 np.set_printoptions(formatter={'int': hex})
 
 
 class AES:
-    rCon = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36]
+    """Can encrypt and decrypt messages aswell as generate key
 
+    Methods
+    -------
+    roundkeyGen(key)
+        Generates roundkeys
+
+    encrypt(plaintext)
+        Encrypts message with previously generated round keys
+
+    decrypt(ciphertext)
+        Decrypts message with previously generated round keys   
+    """
     roundKeys = []
+
+    rCon = [0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36]
 
     constantMatrix = np.array([
         [2, 3, 1, 1],
@@ -193,6 +186,7 @@ class AES:
     ]
 
     def gf_mult(self, byte, constant):
+        """gaussian field multiplication, it does this through predefinded matricies"""
         match constant:
             case 2:
                 return self.gf_table2[byte]
@@ -210,9 +204,11 @@ class AES:
         return byte
 
     def S(self, x):
+        """Subsitutes in predefined substitution box"""
         return self.sBox[x]
 
     def SInv(self, x):
+        """Inverted substitution box"""
         return self.sBoxInv[x]
 
     def plaintext_to_matrix(self, plaintext):
@@ -238,13 +234,15 @@ class AES:
         return matrix
 
     def matrix_to_plaintext(self, matrix):
+        """Takes the caracter at each position in matrix and joins them"""
         return "".join(chr(c) for c in matrix.flatten())
 
     def matrix_to_ciphertext(self, matrix):
-        # return "".join(hex(i)[2:] for i in matrix.T.flatten())
+        """Converts hex matrix to string representation where every two characters is a number."""
         return "".join("{0:0{1}x}".format(i, 2) for i in matrix.T.flatten())
 
     def ciphertext_to_matrix(self, c):
+        """Converts string representation into hex matrix"""
         matrix = np.array([
             [int(c[0:2], 16), int(c[2:4], 16), int(c[4:6], 16), int(c[6:8], 16)],
             [int(c[8:10], 16), int(c[10:12], 16), int(c[12:14], 16), int(c[14:16], 16)],
@@ -255,6 +253,7 @@ class AES:
         return matrix
 
     def roundkeyGen(self, key):
+        """Generates round keys for each round"""
         key = self.plaintext_to_matrix(key)
         self.roundKeys.append(key)
 
@@ -281,6 +280,7 @@ class AES:
             self.roundKeys.append(key)
 
     def mixCol(self, matrix):
+        """ Mixes columns """
         new_rows = []
         for r_idx in range(4):
             new_row = []
@@ -300,6 +300,7 @@ class AES:
         return np.array(new_rows)
 
     def mixColInv(self, matrix):
+        """ Inverts column mixing """
         new_rows = []
         for r_idx in range(4):
             new_row = []
@@ -319,7 +320,14 @@ class AES:
         return np.array(new_rows)
 
     def encryptRound(self, matrix, r):
-        # sub-bytes
+        """ Takes in a mtatrix and the round number that it's currently on.
+
+        1. Substite bytes.
+        2. Shift rows.
+        3. Mix columns.
+        4. Add round key.
+
+        """
         matrix = np.array([
             list(map(self.S, matrix[0])),
             list(map(self.S, matrix[1])),
@@ -327,7 +335,6 @@ class AES:
             list(map(self.S, matrix[3])),
         ])
 
-        # shift rows
         matrix = np.array([
             matrix[0],
             np.roll(matrix[1], -1),
@@ -335,19 +342,22 @@ class AES:
             np.roll(matrix[3], -3)
         ])
 
-        # mix columns
         if r != 9:
             matrix = self.mixCol(matrix)
 
-        # add round key
         matrix = np.array([
             [matrix.item(x, y) ^ self.roundKeys[r + 1].item(x, y) for x in range(4)] for y in range(4)
         ]).T
         return matrix
 
     def encryptBlock(self, block):
+        """ Encrypt a block (matrix) into ciphertext
 
-        # first XOR
+        1. Initial XOR.
+        2. Run it through all encryption rounds.
+        3. return ciphertext
+        """
+
         matrix = np.array([
             [block.item(x, y) ^ self.roundKeys[0].item(x, y) for x in range(4)] for y in range(4)
         ]).T
@@ -359,6 +369,14 @@ class AES:
         return ciphertext
 
     def encrypt(self, plaintext):
+        """ Takes in plaintext and encrypts it into ciphertext
+
+        1. Split the text up into blocks of 16 characters
+        2. Add padding to the last block 
+            Padding is hex value of how many characters were added as padding.
+            If no padding was neccessary, add another empty block to represent that.
+        3. Encrypt each block individually and add them to ciphertext.
+        """
         def getBlock(start):
             m = plaintext[start:start + 16]
             m = self.plaintext_to_matrix(m)
@@ -377,16 +395,21 @@ class AES:
         return ciphertext
 
     def decryptRound(self, matrix, r):
-        # add round key
+        """ Takes in a mtatrix and the round number that it's currently on.
+
+        1. Add round key
+        2. Invert mix columns
+        3. Invert shft rows
+        4. Substitute bytes
+        """
+
         matrix = np.array([
             [matrix.item(x, y) ^ self.roundKeys[r + 1].item(x, y) for x in range(4)] for y in range(4)
         ]).T
 
-        # inv shift col
         if r != 9:
             matrix = self.mixColInv(matrix)
 
-        # inv shift rows
         matrix = np.array([
             matrix[0],
             np.roll(matrix[1], 1),
@@ -394,7 +417,6 @@ class AES:
             np.roll(matrix[3], 3)
         ])
 
-        # sub-bytes
         matrix = np.array([
             list(map(self.SInv, matrix[0])),
             list(map(self.SInv, matrix[1])),
@@ -404,13 +426,17 @@ class AES:
 
         return matrix
 
-    def decrypt(self, ciphertext):
-        matrix = self.ciphertext_to_matrix(ciphertext)
+    def decryptBlock(self, matrix):
+        """ Takes in a block in matrix-form.
+
+        1. Run it  through the decryptionsrounds backwards.
+        2. Reverse the initial xor.
+        3. Return it in plaintext
+        """
 
         for r in range(9, -1, -1):
             matrix = self.decryptRound(matrix, r)
 
-        # reverse the inital xor
         matrix = np.array([
             [matrix.item(x, y) ^ self.roundKeys[0].item(x, y) for x in range(4)] for y in range(4)
         ])
@@ -418,21 +444,43 @@ class AES:
 
         return plaintext
 
+    def decrypt(self, ciphertext):
+        """ Takes in ciphertext and returns plaintext.
+
+        1. Splits up ciphertext into blocks.
+        2. Decrypts each block individually.
+        3. Removes padding on last block.
+        4. Return all text.
+        """
+        def getBlock(start):
+            m = ciphertext[start:start + 32]
+            m = self.ciphertext_to_matrix(m)
+            return m
+        blocks = [getBlock(start) for start in range(0, len(ciphertext), 32)]
+
+        message = ""
+
+        for block in blocks[:-1]:
+            message += self.decryptBlock(block)
+
+        lastBlockMessage = self.decryptBlock(blocks[-1])
+        paddingLength = ord(lastBlockMessage[-1])
+        message = message + lastBlockMessage[:16 - paddingLength]
+        return message
+
 
 if __name__ == "__main__":
     aes = AES()
     aes.roundkeyGen("Thats my Kung Fu")
     print("Generated Round Keys")
 
-    message = "Two One Nine Two"
+    message = "Two One Nine Two| second block |and some more"
     print(message)
-
-    # a = aes.plaintext_to_matrix("oolaskdjlolaskj")
-
-    # print(a)
+    print()
 
     encrypted = aes.encrypt(message)
     print(encrypted)
+    print()
 
     decrypted = aes.decrypt(encrypted)
     print(decrypted)
