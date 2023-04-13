@@ -21,5 +21,10 @@ The `aes.py` file is An adaptation of the algorithm described by [simplilearn.co
 
 In addition to Simplilearn, I used [braincoke.fr](https://braincoke.fr/blog/2020/08/the-aes-key-schedule-explained/#rotword) and [brainkart.com](https://www.brainkart.com/article/AES-Key-Expansion_8410/) for learning about the key schedule.
 
-`mixColumns` was done with lookup tables from [wikipedia.org](https://en.wikipedia.org/wiki/Rijndael_MixColumns)
+`mixColumns` was done with lookup tables from [wikipedia.org](https://en.wikipedia.org/wiki/Rijndael_MixColumns).
 
+Unlike RSA, AES encryption is symmetric, we start by generating round keys which are used for both encryption and decryption. This means that two users cannot share information with one another without first sharing a key. This key must be sent with and asymetric encryption algorithm such as RSA for example.
+
+The algorithm takes care of messages block-wise, by either encrypting or decrypting one block at a time. Since I implemented 128 bit AES, each block consists of 16 bytes in a 4 X 4 matrix. The bytes in this matrix are then going through 10 round of jumbling around and having a round-key added to them. This ensures that there is no way to uncover any meaning behind an encrypted message. The decryption process does the same in reverse, which is only possible if you have the round keys.
+
+As of today there is no known way of decrypting AES. It is even quantum-safe as long as a sufficiently large key size is used. AES is also increadbly fast since it is so highly standardised. Many processors have built in hardware-level implementationos
