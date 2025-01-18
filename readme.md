@@ -5,7 +5,7 @@ OBS - this is for educational purpouses only!
 ## RSA
 The `rsa.py` file is an implementation of the algorithm explained on [brilliant.org](https://brilliant.org/wiki/rsa-encryption/).
 
-Firstly, we generate two prime numbers. The product of these two is our public key which is used to transform message into encrypted messages. The private key is based on our two secret prime numbers, and with this private key, it is possible to undo transformations. But this only works as long as no one is able to found out which two primes make up the public key. Fortunately, there is no efficient algorithm for factoring yet.
+Firstly, we generate two prime numbers. The product of these two is our public key which is used to transform message into encrypted messages. The private key is based on our two secret prime numbers, and with this private key, it is possible to undo transformations. But this only works as long as no one is able to find out which two primes make up the public key. Fortunately, there is no efficient algorithm for factoring yet.
 
 However, in the future, it is predicted that quantum computers might be able to do exactly this at great speed. Even increasing the size of prime numbers will not suffice. This is why new methods such as lattice-based encryption are being experimented with.
 
